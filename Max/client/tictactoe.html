@@ -1,0 +1,103 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <script src="/socket.io/socket.io.js"></script>
+    
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <meta http-equiv="X-UA-Compatible" content="ie=edge" />
+    <title>Tic-Tac-Toe</title>
+    <link rel="stylesheet" type="text/css" href="/client/style.css"/>
+</head>
+
+<body>
+    <div class="container">
+        <h1>Tic-Tac-Toe</h1>
+        <div class="play-area">
+
+        </div>
+        <h2 id="winner"></h2>
+        <button onclick="reset_board()">RESET</button>
+    </div>
+    <!--<script src="tictactoe.js"></script>-->
+    <script>
+        let socket = io();
+
+        let playerId = null;
+        socket.on('newPlayer', function (NewPlayerId) {
+            if (playerId == null){
+                playerId = NewPlayerId;
+                console.log(playerId);
+            }    
+        });
+        socket.on('test', function () {
+            console.log(playerId);
+        })
+        const symbol1 = "X";
+        const symbol2 = "O";
+        let playerName = "";
+        let player2Name = "";
+        let winningPlayer = "";
+
+        let board_full = false;
+        let play_board = ["", "", "", "", "", "", "", "", ""];
+
+        socket.on('update', function (clickedBy) {
+            play_board[clickedBy.location] = clickedBy.symbol;
+            document.querySelector(`#block_${clickedBy.location}`).classList.add("occupied");
+            render_board;
+        })
+
+        const board_container = document.querySelector(".play-area");
+
+        const winner_statement = document.getElementById("winner");
+
+        const render_board = () => {
+            board_container.innerHTML = ""
+            play_board.forEach((e, i) => {
+                board_container.innerHTML += `<div id="block_${i}" class="block" onclick="play(${i})">${play_board[i]}</div>`
+            });
+        };
+
+        const play = e => {
+            let clickedBy = { id: playerId, location: e }
+            console.log(playerId);
+            socket.emit('turnCheck', clickedBy)
+        }
+
+        socket.on('gameEnd', function (state) {
+            if (state == 1) {
+                winner.innerText = "Winner is player!!";
+                winner.classList.add("playerWin");
+            }
+            else if (state == 2) {
+                winner.innerText = "Winner is computer";
+                winner.classList.add("computerWin");
+            }
+            else {
+                winner.innerText = "Draw!";
+                winner.classList.add("draw");
+            }
+        })
+
+        const reset_board = () => {
+            socket.emit('reset');
+        };
+
+        socket.on('reset', function () {
+            winner.classList.remove("playerWin");
+            winner.classList.remove("computerWin");
+            winner.classList.remove("draw");
+            winner.innerText = "";
+            render_board();
+        });
+
+
+        //initial render
+        render_board();
+
+    </script>
+</body>
+
+</html>
