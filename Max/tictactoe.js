@@ -35,36 +35,42 @@ io.sockets.on('connection', function (socket) {
   players[playerId] = { id: playerId, symbol: null, move: null }
   if (player1 == null) {
     players[playerId].symbol = "X";
-    players[playerId].move = "true";
+    players[playerId].move = true;
     player1 = players[playerId];
+    console.log(player1.id);
   }
   else if (player2 == null) {
     players[playerId].symbol = "O";
-    players[playerId].move = "false";
+    players[playerId].move = false;
     player2 = players[playerId];
   }
   else {
     //potential spectator implimentation
   }
   //tell client their Id.
-  console.log(playerId);
   socket.emit('newPlayer', playerId);
 
   socket.on('turnCheck', function (clickedBy) {
-    socket.emit('test');
     if(play_board[clickedBy.location] == "" && !board_full)
     {
+      console.log("test");
+      console.log(player1.id == clickedBy.id);
+      console.log(player1.move);
+      console.log(player1.id == clickedBy.id && player1.move);
       if (player1.id == clickedBy.id && player1.move == true) {
         play_board[clickedBy.location] = player1.symbol;
+        console.log(play_board[clickedBy.location]);
         update();
         clickedBy.symbol = "X";
         socket.emit('update', clickedBy);
+        SOCKET_LIST[player2.id].emit('update', clickedBy);
       }
-      else if (player2.id == clickedBy.id && player2.move == true) {
+      else if (player2.id == clickedBy.id && player2.move) {
         play_board[clickedBy.location] = player2.symbol;
         update();
-        clickedBy.symbol = "Y";
+        clickedBy.symbol = "O";
         socket.emit('update', clickedBy);
+        SOCKET_LIST[player1.id].emit('update', clickedBy);
       }
     }
   })
@@ -81,7 +87,7 @@ io.sockets.on('connection', function (socket) {
     return (
       play_board[a] == play_board[b] &&
       play_board[b] == play_board[c] &&
-      (play_board[a] == symbol1 || play_board[a] == symbol2)
+      (play_board[a] == player1.symbol || play_board[a] == player2.symbol)
     );
   };
 
@@ -130,19 +136,22 @@ io.sockets.on('connection', function (socket) {
     let res = check_match()
     if (res == player1.symbol) {
       socket.emit('gameEnd', 1);
+      SOCKET_LIST[player2.id].emit('gameEnd', 1);
       board_full = true
     } else if (res == player2.symbol) {
       socket.emit('gameEnd', 2);
+      SOCKET6_LIST[player1.id].emit('gameEnd', 2);
       board_full = true
     } else if (board_full) {
       socket.emit('gameEnd', 0);
+      SOCKET_LIST[player2.id].emit('gameEnd', 0);
     }
   };
 
   check_board_complete = () => {
     let flag = true;
     play_board.forEach(element => {
-      if (element != symbol1 && element != symbol2) {
+      if (element != player1.symbol && element != player2.symbol) {
         flag = false;
       }
     });

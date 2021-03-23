@@ -18,7 +18,7 @@
 
         </div>
         <h2 id="winner"></h2>
-        <button onclick="reset_board()">RESET</button>
+        <!--<button onclick="reset_board()">RESET</button>-->
     </div>
     <!--<script src="tictactoe.js"></script>-->
     <script>
@@ -46,7 +46,8 @@
         socket.on('update', function (clickedBy) {
             play_board[clickedBy.location] = clickedBy.symbol;
             document.querySelector(`#block_${clickedBy.location}`).classList.add("occupied");
-            render_board;
+            console.log(play_board[clickedBy.location]);
+            render_board();
         })
 
         const board_container = document.querySelector(".play-area");
@@ -56,23 +57,26 @@
         const render_board = () => {
             board_container.innerHTML = ""
             play_board.forEach((e, i) => {
+                console.log(e);
+                console.log(i);
                 board_container.innerHTML += `<div id="block_${i}" class="block" onclick="play(${i})">${play_board[i]}</div>`
             });
         };
 
         const play = e => {
-            let clickedBy = { id: playerId, location: e }
             console.log(playerId);
+            let clickedBy = { id: playerId, location: e }
+            console.log(clickedBy.id);
             socket.emit('turnCheck', clickedBy)
         }
 
         socket.on('gameEnd', function (state) {
             if (state == 1) {
-                winner.innerText = "Winner is player!!";
+                winner.innerText = "Winner is Player 1!!";
                 winner.classList.add("playerWin");
             }
             else if (state == 2) {
-                winner.innerText = "Winner is computer";
+                winner.innerText = "Winner is PLayer 2!!";
                 winner.classList.add("computerWin");
             }
             else {
