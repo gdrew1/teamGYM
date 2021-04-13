@@ -23,13 +23,16 @@
     <!--<script src="tictactoe.js"></script>-->
     <script>
         let socket = io();
+        
+        socket.emit("newGame");
 
         let playerId = null;
         socket.on('newPlayer', function (NewPlayerId) {
             if (playerId == null){
                 playerId = NewPlayerId;
                 console.log(playerId);
-            }    
+            }  
+            document.cookie = "id =" + playerId + ";path=/";  
         });
         socket.on('test', function () {
             console.log(playerId);
@@ -85,7 +88,7 @@
             }
         })
 
-        const reset_board = () => {
+        const reset_board = (playerId) => {
             socket.emit('reset');
         };
 
