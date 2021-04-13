@@ -5,7 +5,7 @@ let app = express();
 let server = require('http').createServer(app);
 
 app.get('/', function (req, res) {
-  res.sendFile(__dirname + '/client/home.html');
+  res.sendFile(__dirname + '/client/profile.html');
   //res.sendFile(__dirname + '/client/style.css');
 });
 app.use('/client', express.static(__dirname + '/client'));
