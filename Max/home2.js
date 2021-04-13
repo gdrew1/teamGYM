@@ -27,30 +27,40 @@ let idinc = 0;
 io.sockets.on('connection', function (socket) {
   console.log("connected");
   //Give the client an id and potentially a player so they can tell us whether they are p1 p2 or spectator
-  let playerId = Math.random();
-  SOCKET_LIST[playerId] = socket;
-  PLAYER_LIST[socket] = playerId;
-  players[playerId] = { id: playerId, symbol: null, move: null, gameId: idinc }
+  let playedId = null;
+  socket.emit("test");
 
-  if(currentGame == null){
-    let temp = idinc
-    currentGame = {id: temp, player1: null, player2: null, board_full: false, play_board: ["", "", "", "", "", "", "", "", ""]}
-    players[playerId].symbol = "X";
-    players[playerId].move = true;
-    currentGame.player1 = players[playerId];
-    console.log(currentGame.player1.id);
-  }
-  else{
-    games[currentGame.id] = currentGame;
-    idinc++;
-    
-    players[playerId].symbol = "O";
-    players[playerId].move = false;
-    currentGame.player2 = players[playerId];
-    currentGame = null;
-  }
+  socket.on("wantToPlay", function () {
+    SOCKET_LIST[playerId] = socket;
+    PLAYER_LIST[socket] = playerId;
+    players[playerId] = { id: playerId, symbol: null, move: null, gameId: idinc }
+
+    if(currentGame == null){
+      let temp = idinc
+      currentGame = {id: temp, player1: null, player2: null, board_full: false, play_board: ["", "", "", "", "", "", "", "", ""]}
+      players[playerId].symbol = "X";
+      players[playerId].move = true;
+      currentGame.player1 = players[playerId];
+      console.log(currentGame.player1.id);
+    }
+    else{
+      games[currentGame.id] = currentGame;
+      idinc++;
+      
+      players[playerId].symbol = "O";
+      players[playerId].move = false;
+      currentGame.player2 = players[playerId];
+      currentGame = null;
+  }});
   //tell client their Id.
-  socket.emit('newPlayer', playerId);
+  socket.on('test', function (id) {
+    playerId = id;
+    if(playerId == "null"){
+      playerId = Math.random();
+      
+    }
+    socket.emit("newPlayer", playerId);
+  })
 
   socket.on('turnCheck', function (clickedBy) {
     console.log(clickedBy);

@@ -23,20 +23,7 @@
     <!--<script src="tictactoe.js"></script>-->
     <script>
         let socket = io();
-        
-        socket.emit("newGame");
 
-        let playerId = null;
-        socket.on('newPlayer', function (NewPlayerId) {
-            if (playerId == null){
-                playerId = NewPlayerId;
-                console.log(playerId);
-            }  
-            document.cookie = "id =" + playerId + ";path=/";  
-        });
-        socket.on('test', function () {
-            console.log(playerId);
-        })
         const symbol1 = "X";
         const symbol2 = "O";
         let playerName = "";
@@ -45,6 +32,21 @@
 
         let board_full = false;
         let play_board = ["", "", "", "", "", "", "", "", ""];
+
+        socket.on('newPlayer', function (playerId) {
+            if(getId() == "null"){
+            document.cookie = "id =" + playerId + ";path=/";  
+            console.log(getId());
+            }
+            console.log(getId());
+            console.log(getId() == "null");
+            socket.emit("wantToPlay");
+        });
+        socket.on('test', function () {
+            socket.emit('test', getId());
+            console.log(getId());
+        })
+        
 
         socket.on('update', function (clickedBy) {
             play_board[clickedBy.location] = clickedBy.symbol;
@@ -60,17 +62,30 @@
         const render_board = () => {
             board_container.innerHTML = ""
             play_board.forEach((e, i) => {
-                console.log(e);
-                console.log(i);
+                
                 board_container.innerHTML += `<div id="block_${i}" class="block" onclick="play(${i})">${play_board[i]}</div>`
             });
         };
 
         const play = e => {
-            console.log(playerId);
-            let clickedBy = { id: playerId, location: e }
-            console.log(clickedBy.id);
+            
+            let clickedBy = { id: getId(), location: e }
+            
             socket.emit('turnCheck', clickedBy)
+        }
+
+        function getId() {
+            let returned = "null";
+            try {
+                returned = document.cookie
+                    .split('; ')
+                    .find(row => row.startsWith('id='))
+                    .split('=')[1];
+            }
+            catch{
+                
+            }
+            return returned;
         }
 
         socket.on('gameEnd', function (state) {
@@ -88,7 +103,7 @@
             }
         })
 
-        const reset_board = (playerId) => {
+        const reset_board = () => {
             socket.emit('reset');
         };
 
