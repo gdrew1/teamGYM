@@ -28,7 +28,33 @@
             window.location.href = destination;
         });
 
-        socket.emit("wantToPlay");
+        
+
+        socket.on('test', function () {
+            socket.emit('test', getId());
+            console.log(getId());
+        })
+
+        socket.on('newPlayer', function (playerId) {
+            if(getId() == "null"){
+            document.cookie = "id =" + playerId + ";path=/";  
+            }
+            socket.emit("requestGame", getId());
+        });
+
+        function getId() {
+            let returned = "null";
+            try {
+                returned = document.cookie
+                    .split('; ')
+                    .find(row => row.startsWith('id='))
+                    .split('=')[1];
+            }
+            catch{
+                
+            }
+            return returned;
+        }
 
 
         
