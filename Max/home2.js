@@ -5,7 +5,7 @@ let app = express();
 let server = require('http').createServer(app);
 
 app.get('/', function (req, res) {
-  res.sendFile(__dirname + '/client/tictactoe.html');
+  res.sendFile(__dirname + '/client/home.html');
   //res.sendFile(__dirname + '/client/style.css');
 });
 app.use('/client', express.static(__dirname + '/client'));
@@ -23,16 +23,27 @@ let players = {};
 let currentGame = null;
 let games = {};
 let idinc = 0;
+let waiting = null;
 //Runs when a new client connects
 io.sockets.on('connection', function (socket) {
   console.log("connected");
   //Give the client an id and potentially a player so they can tell us whether they are p1 p2 or spectator
-  let playedId = null;
   socket.emit("test");
 
-  socket.on("wantToPlay", function () {
-    SOCKET_LIST[playerId] = socket;
-    PLAYER_LIST[socket] = playerId;
+  socket.on("requestGame", function (playerId) {
+    if(waiting == null){
+      waiting = playerId;
+    }
+    else{
+      SOCKET_LIST[waiting].emit('redirect', '/client/tictactoe.html');
+      SOCKET_LIST[playerId].emit('redirect', '/client/tictactoe.html');
+      waiting = null;
+
+    }
+  });
+
+  socket.on("wantToPlay", function (playerId) {
+    
     players[playerId] = { id: playerId, symbol: null, move: null, gameId: idinc }
 
     if(currentGame == null){
@@ -54,12 +65,17 @@ io.sockets.on('connection', function (socket) {
   }});
   //tell client their Id.
   socket.on('test', function (id) {
-    playerId = id;
+    let playerId = id;
     if(playerId == "null"){
       playerId = Math.random();
       
     }
+    else if(players[playerId] != null && players[playedId].gameId != null){
+      //Rejoin game code here
+    }
+    SOCKET_LIST[playerId] = socket;
     socket.emit("newPlayer", playerId);
+    console.log(playerId);
   })
 
   socket.on('turnCheck', function (clickedBy) {
@@ -183,13 +199,15 @@ io.sockets.on('connection', function (socket) {
   })
 
   socket.on('disconnect', function () {
-    if (socket.id == game.player1) {
-      game.player1 = null;
+    /*console.log(socket.id);
+    game = games[players[socket.id].gameId]
+    if (socket.id == game.player1.id) {
+      //ForfeitCode
     }
-    else if (socket.id == game.player2) {
-      game.player2 = null;
+    else if (socket.id == game.player2.id) {
+      //ForfeitCode
     }
-    delete SOCKET_LIST[socket.id];
+    delete SOCKET_LIST[socket.id];*/
   });
 });
 server.listen(4141);

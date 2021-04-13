@@ -40,7 +40,7 @@
             }
             console.log(getId());
             console.log(getId() == "null");
-            socket.emit("wantToPlay");
+            socket.emit("wantToPlay", playerId);
         });
         socket.on('test', function () {
             socket.emit('test', getId());
@@ -83,7 +83,7 @@
                     .split('=')[1];
             }
             catch{
-                
+
             }
             return returned;
         }
@@ -114,6 +114,17 @@
             winner.innerText = "";
             render_board();
         });
+
+        socket.on('forfeit', function(num) {
+            if(num == 1){
+                winner.innerText = "Player 2 Forfeit!";
+                winner.classList.add("playerWin");
+            }
+            else{
+                winner.innerText = "Player 1 Forfeit!";
+                winner.classList.add("computerWin");
+            }
+        })
 
 
         //initial render
