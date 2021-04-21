@@ -17,6 +17,7 @@ console.log("Server started.");
 //List of server sockets in use
 SOCKET_LIST = {};
 PLAYER_LIST = {};
+SOCKETID_LIST = {};
 //list of clients, each will be attatched to a socket
 let players = {};
 //The current board state
@@ -37,6 +38,8 @@ io.sockets.on('connection', function (socket) {
     else{
       SOCKET_LIST[waiting].emit('redirect', '/client/tictactoe.html');
       SOCKET_LIST[playerId].emit('redirect', '/client/tictactoe.html');
+      SOCKETID_LIST[SOCKET_LIST[waiting].id] = waiting;
+      SOCKETID_LIST[SOCKET_LIST[playerId].id] = playerId;
       waiting = null;
 
     }
@@ -74,6 +77,7 @@ io.sockets.on('connection', function (socket) {
       //Rejoin game code here
     }
     SOCKET_LIST[playerId] = socket;
+    SOCKETID_LIST[socket.id] = playerId;
     socket.emit("newPlayer", playerId);
     console.log(playerId);
   })
@@ -199,15 +203,30 @@ io.sockets.on('connection', function (socket) {
   })
 
   socket.on('disconnect', function () {
-    /*console.log(socket.id);
-    game = games[players[socket.id].gameId]
-    if (socket.id == game.player1.id) {
-      //ForfeitCode
-    }
-    else if (socket.id == game.player2.id) {
-      //ForfeitCode
-    }
-    delete SOCKET_LIST[socket.id];*/
+    console.log("initial: " + socket.id);
+
+    if(players[SOCKETID_LIST[socket.id]] != null) {
+      console.log("first case passed");
+      if(games[players[SOCKETID_LIST[socket.id]].gameId] != null)
+        console.log("second case passed");
+        game = games[players[SOCKETID_LIST[socket.id]].gameId]
+        if (SOCKETID_LIST[socket.id] == game.player1.id) {
+          SOCKET_LIST[game.player2.id].emit("forfeit", 1);
+          game.board_full = true;
+          console.log("1 is gone");
+        }
+        else if (SOCKETID_LIST[socket.id] == game.player2.id) {
+          SOCKET_LIST[game.player1.id].emit("forfeit", 2);
+          game.board_full = true;
+          console.log("2 is gone");
+        }
+        delete SOCKET_LIST[socket.id];
+        delete SOCKET_LIST[socket.id];
+      }
+      else
+      {
+        currentGame = null;
+      }
   });
 });
 server.listen(4141);

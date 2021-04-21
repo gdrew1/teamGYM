@@ -124,14 +124,16 @@
 
         socket.on('forfeit', function(num) {
             if(num == 1){
-                winner.innerText = "Player 2 Forfeit!";
+                winner.innerText = "Player 1 Forfeit!";
                 winner.classList.add("playerWin");
             }
             else{
-                winner.innerText = "Player 1 Forfeit!";
+                winner.innerText = "Player 2 Forfeit!";
                 winner.classList.add("computerWin");
             }
         })
+
+        
 
 
         //initial render
