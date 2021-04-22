@@ -173,13 +173,17 @@ io.sockets.on('connection', function (socket) {
       socket.emit('gameEnd', 1);
       SOCKET_LIST[game.player2.id].emit('gameEnd', 1);
       game.board_full = true
+      gameEnd(game);
+
     } else if (res == game.player2.symbol) {
       socket.emit('gameEnd', 2);
       SOCKET6_LIST[game.player1.id].emit('gameEnd', 2);
       game.board_full = true
+      gameEnd(game);
     } else if (game.board_full) {
       socket.emit('gameEnd', 0);
       SOCKET_LIST[game.player2.id].emit('gameEnd', 0);
+      gameEnd(game);
     }
   };
 
@@ -214,11 +218,13 @@ io.sockets.on('connection', function (socket) {
           SOCKET_LIST[game.player2.id].emit("forfeit", 1);
           game.board_full = true;
           console.log("1 is gone");
+          gameEnd(game);
         }
         else if (SOCKETID_LIST[socket.id] == game.player2.id) {
           SOCKET_LIST[game.player1.id].emit("forfeit", 2);
           game.board_full = true;
           console.log("2 is gone");
+          gameEnd(game);
         }
         delete SOCKET_LIST[socket.id];
         delete SOCKET_LIST[socket.id];
@@ -228,5 +234,48 @@ io.sockets.on('connection', function (socket) {
         currentGame = null;
       }
   });
+
+  socket.on('forfeit', function () {
+    console.log("initial: " + socket.id);
+    
+    if(players[SOCKETID_LIST[socket.id]] != null) {
+      console.log("first case passed");
+      if(games[players[SOCKETID_LIST[socket.id]].gameId] != null)
+        console.log("second case passed");
+        game = games[players[SOCKETID_LIST[socket.id]].gameId]
+        if (SOCKETID_LIST[socket.id] == game.player1.id) {
+          SOCKET_LIST[game.player2.id].emit("forfeit", 1);
+          socket.emit("forfeit", 1);
+          game.board_full = true;
+          console.log("1 is gone");
+          gameEnd(game);
+        }
+        else if (SOCKETID_LIST[socket.id] == game.player2.id) {
+          SOCKET_LIST[game.player1.id].emit("forfeit", 2);
+          socket.emit("forfeit", 2);
+          game.board_full = true;
+          console.log("2 is gone");
+          gameEnd(game);
+        }
+        delete SOCKET_LIST[socket.id];
+        delete SOCKET_LIST[socket.id];
+      }
+      else
+      {
+        currentGame = null;
+      }
+  });
+
+  function gameEnd(game) {
+    console.log("game end");
+    delete SOCKETID_LIST[SOCKET_LIST[game.player2.id].id];
+    delete SOCKETID_LIST[SOCKET_LIST[game.player1.id].id];
+    delete SOCKET_LIST[game.player1.id];
+    delete SOCKET_LIST[game.player2.id];
+    delete players[game.player1.id];
+    delete players[game.player2.id];
+    delete games[game.id];
+    //Ladder update functionality
+  }
 });
 server.listen(4141);

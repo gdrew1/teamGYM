@@ -25,8 +25,9 @@
 
         </div>
         <h2 id="winner"></h2>
-        <!--<button onclick="reset_board()">RESET</button>-->
+        <button onclick="forfeit_button()" id="forfeitButton">Forfeit</button>
     </div>
+    
     <!--<script src="tictactoe.js"></script>-->
     <script>
         let socket = io();
@@ -38,6 +39,7 @@
         let winningPlayer = "";
 
         let board_full = false;
+        let finished = false;
         let play_board = ["", "", "", "", "", "", "", "", ""];
 
         socket.on('newPlayer', function (playerId) {
@@ -99,19 +101,33 @@
             if (state == 1) {
                 winner.innerText = "Winner is Player 1!!";
                 winner.classList.add("playerWin");
+                finished = true;
+                document.getElementById("forfeitButton").textContent = "Play Again";
             }
             else if (state == 2) {
                 winner.innerText = "Winner is PLayer 2!!";
                 winner.classList.add("computerWin");
+                finished = true;
+                document.getElementById("forfeitButton").textContent = "Play Again";
             }
             else {
                 winner.innerText = "Draw!";
                 winner.classList.add("draw");
+                finished = true;
+                document.getElementById("forfeitButton").textContent = "Play Again";
             }
         })
 
-        const reset_board = () => {
-            socket.emit('reset');
+        const forfeit_button = () => {
+            console.log(finished);
+            if(!finished){
+                console.log("test");
+                socket.emit('forfeit');
+            }
+            else{
+                window.location.href = "/client/waiting.html";
+            }
+            
         };
 
         socket.on('reset', function () {
@@ -126,10 +142,14 @@
             if(num == 1){
                 winner.innerText = "Player 1 Forfeit!";
                 winner.classList.add("playerWin");
+                finished = true;
+                document.getElementById("forfeitButton").textContent = "Play Again";
             }
             else{
                 winner.innerText = "Player 2 Forfeit!";
                 winner.classList.add("computerWin");
+                finished = true;
+                document.getElementById("forfeitButton").textContent = "Play Again";
             }
         })
 
