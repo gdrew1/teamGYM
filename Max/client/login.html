@@ -102,7 +102,7 @@
         });
 
         socket.on('test', function () {
-            socket.emit('test', getId());
+            //socket.emit('test', getId());
             console.log(getId());
         })
         
@@ -110,6 +110,7 @@
             if(getId() == "null"){
             document.cookie = "id =" + playerId + ";path=/";  
             }
+            window.location.href = /client/waiting.html;
         });*/
 
       const login = () => {
