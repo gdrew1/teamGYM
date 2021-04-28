@@ -18,6 +18,7 @@ console.log("Server started.");
 SOCKET_LIST = {};
 PLAYER_LIST = {};
 SOCKETID_LIST = {};
+USERNAME_LIST = {};
 //list of clients, each will be attatched to a socket
 let players = {};
 //The current board state
@@ -70,7 +71,8 @@ io.sockets.on('connection', function (socket) {
   socket.on('test', function (id) {
     let playerId = id;
     if(playerId == "null"){
-      playerId = Math.random();
+      //playerId = Math.random();
+      socket.emit('redirect', '/client/login.html');
       
     }
     else if(players[playerId] != null && players[playedId].gameId != null){
@@ -80,6 +82,22 @@ io.sockets.on('connection', function (socket) {
     SOCKETID_LIST[socket.id] = playerId;
     socket.emit("newPlayer", playerId);
     console.log(playerId);
+  })
+
+  socket.on('login', function(username, password) {
+    let playerId;
+    let passed = false; //passed will be the value for if they log in
+    //put database check code here
+    if(passed){
+      playerId = Math.random();
+      SOCKET_LIST[playerId] = socket;
+      SOCKETID_LIST[socket.id] = playerId;
+      USERNAME_LIST[playerId] = username;
+      socket.emit("newPlayer", playerId);
+    }
+    else{
+      socket.emit('bad_login');
+    }
   })
 
   socket.on('turnCheck', function (clickedBy) {
