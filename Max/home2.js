@@ -97,9 +97,7 @@ io.sockets.on('connection', function (socket) {
 
   socket.on('login', function(username, password) {
     let playerId;
-    console.log(username);
-    console.log(password);
-    //put database check code here
+    //database check code
     startSQL.query('SELECT * FROM users AS data WHERE username = \'' + username + '\'', function(error, results, fields) {
     if (error)
     {
@@ -123,18 +121,30 @@ io.sockets.on('connection', function (socket) {
 
   socket.on('register', function(username, password) {
     let playerId;
-    let passed = false;//check if username is unique
-    if(passed){
-      playerId = Math.random();
-      SOCKET_LIST[playerId] = socket;
-      SOCKETID_LIST[socket.id] = playerId;
-      USERNAME_LIST[playerId] = username;
-      socket.emit("newPlayer", playerId);
-      //add to database
-    }
-    else{
+    //check if username is unique
+    startSQL.query('SELECT * FROM users AS data WHERE username = \'' + username + '\'', function(error, results, fields){
+      if (error)
+      {
+        throw error;
+      }
+      if(results.length == 0)
+      {
+        startSQL.query('INSERT INTO users(username, password) VALUES (\'' + username + '\',\'' + password + '\')', function(error, results, fields){
+        if (error)
+        {
+        throw error;
+        } 
+        })
+        playerId = Math.random();
+        SOCKET_LIST[playerId] = socket;
+        SOCKETID_LIST[socket.id] = playerId;
+        USERNAME_LIST[playerId] = username;
+        socket.emit("newPlayer", playerId);
+      }
+      else{
       socket.emit('bad_register');
-    }
+      }
+    })
   })
 
   socket.on('turnCheck', function (clickedBy) {
