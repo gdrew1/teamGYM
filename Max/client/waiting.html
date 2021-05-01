@@ -33,9 +33,7 @@
         })
 
         socket.on('newPlayer', function (playerId) {
-            if(getId() == "null"){
             document.cookie = "id =" + playerId + ";path=/";  
-            }
             socket.emit("requestGame", getId());
         });
 

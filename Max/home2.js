@@ -87,11 +87,12 @@ io.sockets.on('connection', function (socket) {
     }
     else if(players[playerId] != null && players[playedId].gameId != null){
       //Rejoin game code here
+    }else {
+      SOCKET_LIST[playerId] = socket;
+      SOCKETID_LIST[socket.id] = playerId;
+      socket.emit("newPlayer", playerId);
+      console.log(playerId);
     }
-    SOCKET_LIST[playerId] = socket;
-    SOCKETID_LIST[socket.id] = playerId;
-    socket.emit("newPlayer", playerId);
-    console.log(playerId);
   })
 
   socket.on('login', function(username, password) {
@@ -118,6 +119,22 @@ io.sockets.on('connection', function (socket) {
       socket.emit('bad_login');
     }
     })
+  })
+
+  socket.on('register', function(username, password) {
+    let playerId;
+    let passed = false;//check if username is unique
+    if(passed){
+      playerId = Math.random();
+      SOCKET_LIST[playerId] = socket;
+      SOCKETID_LIST[socket.id] = playerId;
+      USERNAME_LIST[playerId] = username;
+      socket.emit("newPlayer", playerId);
+      //add to database
+    }
+    else{
+      socket.emit('bad_register');
+    }
   })
 
   socket.on('turnCheck', function (clickedBy) {
@@ -205,9 +222,12 @@ io.sockets.on('connection', function (socket) {
     return "";
   };
 
+
+  //GAMEEND!!!!!
   const check_for_winner = (game) => {
     let res = check_match(game)
     if (res == game.player1.symbol) {
+      
       socket.emit('gameEnd', 1);
       SOCKET_LIST[game.player2.id].emit('gameEnd', 1);
       game.board_full = true
@@ -244,8 +264,10 @@ io.sockets.on('connection', function (socket) {
     socket.emit('reset');
   })
 
+
+  //GAMEEND!!!!
   socket.on('disconnect', function () {
-    console.log("initial: " + socket.id);
+    
 
     if(players[SOCKETID_LIST[socket.id]] != null) {
       console.log("first case passed");
@@ -273,8 +295,10 @@ io.sockets.on('connection', function (socket) {
       }
   });
 
+
+  //GAMEEND!!!!
   socket.on('forfeit', function () {
-    console.log("initial: " + socket.id);
+    
     
     if(players[SOCKETID_LIST[socket.id]] != null) {
       console.log("first case passed");

@@ -7,6 +7,7 @@
     <title>Profile</title>
 
     <link rel="stylesheet" type="text/css" href="/client/style.css"/>
+    <link rel="stylesheet\" href="css/main.css\"> 
 </head>
 
 <body>
@@ -16,5 +17,12 @@
         <a class = "active" href="/client/profile.html">Profile</a>
         <a href="/client/friends.html">Friends</a>
     </div>
-    Profile
+    <table border = "1">
+        <tr><th>Type of Game</th><th>Number of Game</th><th>Win</th><th>Lose</th><th>Tie</th></tr>
+        <tr><td>3 * 3</td><td>%= record[0].getGame33() %</td><td>%= record[0].getWin33() %</td><td>%= record[0].getLose33() + %</td><td>%= record[0].getTie33() %</td></tr>
+        <tr><td>4 * 4</td><td>%= record[0].getGame44() %</td><td>%= record[0].getWin44() %</td><td>%= record[0].getLose44() + %</td><td>%= record[0].getTie44() %</td></tr>
+        <tr><td>5 * 5</td><td>%= record[0].getGame55() %</td><td>%= record[0].getWin55() %</td><td>%= record[0].getLose55() + %</td><td>%= record[0].getTie55() %</td></tr>
+        </table>
+        
+        <a href=/mainpage>mainpage</a> <br>
 </body>
