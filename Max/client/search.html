@@ -70,29 +70,29 @@
   <body>
 
     <div class="topnav">
-      <a href="/client/waiting.html">TicTacToe</a>
-      <a class = "active" href="#Leaderboard">Leaderboard</a>
-      <a href="/client/profile.html">Profile</a>
-      <a href="/client/friends.html">Friends</a>
-    </div>
+        <a href="/client/home.html">Home</a>
+        <a href="/client/waiting.html">TicTacToe</a>
+        <a href="/client/leaderboard.html">Leaderboard</a>
+        <a href="/client/profile.html">Profile</a>
+        <a href="/client/friends.html">Friends</a>
+        <a class = "active" href="/client/login.html">Log In/Register</a>
+        <a href="/client/search.html">Search Players</a>
+      </div>
     <div class="login-form">
-      <h1>Enter your user information for Login.</h1>
+      <h1>Search our Player Database</h1>
       <form action="mainpage" method = "GET" id="login">
       
         <table>
           <tr><td>User Name: </td>
               <td><input type="text" name="userName" placeholder="Username" id="username"></td>
           </tr>
-          <tr><td>Password: </td>
-              <td><input type="password" name="password" placeholder="password" id = password></td>
-          </tr>
-          <tr><td><input type="button" value="Login" onclick="login()"></td></tr>
+          
+          <tr><td><input type="button" value="Login" onclick="search()"></td></tr>
         </table>
+        <b id="warning"></b>
       </form>
     </div>s
     <br>
-    Do not have account?<br>
-    Visit to <a href="/client/registration.html">Registration Page</a>.
 
     <script>
       let socket = io();
@@ -101,22 +101,14 @@
             window.location.href = destination;
         });
 
-        socket.on('test', function () {
-            //socket.emit('test', getId());
-            console.log(getId());
-        })
-        
-        socket.on('newPlayer', function (playerId) {
-            if(getId() == "null"){
-            document.cookie = "id =" + playerId + ";path=/";  
-            }
-            window.location.href = "/client/waiting.html";
-        });
+    socket.on("bad_search", function(){
+        let text = document.getElementById("warning");
+        text.innerHTML = "That User Doesn't Exist!";
+    })
 
-      function login() {
+      function search() {
         let username = document.getElementById("username").value;
-        let password = document.getElementById("password").value;
-        socket.emit('login', username, password);
+        socket.emit('search', username);
       };
 
       function getId() {

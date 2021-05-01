@@ -70,10 +70,13 @@
   <body>
 
     <div class="topnav">
+      <a href="/client/home.html">Home</a>
+      <a class = "active" href="/client/login.html">Log In/Register</a>
       <a href="/client/waiting.html">TicTacToe</a>
-      <a class = "active" href="#Leaderboard">Leaderboard</a>
+      <a href="/client/leaderboard.html">Leaderboard</a>
       <a href="/client/profile.html">Profile</a>
       <a href="/client/friends.html">Friends</a>
+      <a href="/client/search.html">Search Players</a>
     </div>
     <div class="login-form">
       <h1>Enter your user information for Login.</h1>
@@ -88,6 +91,7 @@
           </tr>
           <tr><td><input type="button" value="Login" onclick="login()"></td></tr>
         </table>
+        <b id="warning"></b>
       </form>
     </div>s
     <br>
@@ -112,6 +116,11 @@
             }
             window.location.href = "/client/waiting.html";
         });
+
+        socket.on("bad_login", function(){
+        let text = document.getElementById("warning");
+        text.innerHTML = "Username or Password was Incorrect!";
+    })
 
       function login() {
         let username = document.getElementById("username").value;

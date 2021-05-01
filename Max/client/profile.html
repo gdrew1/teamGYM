@@ -12,17 +12,69 @@
 
 <body>
     <div class="topnav">
+        <a href="/client/home.html">Home</a>
         <a href="/client/waiting.html">TicTacToe</a>
         <a href="/client/leaderboard.html">Leaderboard</a>
         <a class = "active" href="/client/profile.html">Profile</a>
         <a href="/client/friends.html">Friends</a>
-    </div>
-    <table border = "1">
-        <tr><th>Type of Game</th><th>Number of Game</th><th>Win</th><th>Lose</th><th>Tie</th></tr>
-        <tr><td>3 * 3</td><td>%= record[0].getGame33() %</td><td>%= record[0].getWin33() %</td><td>%= record[0].getLose33() + %</td><td>%= record[0].getTie33() %</td></tr>
-        <tr><td>4 * 4</td><td>%= record[0].getGame44() %</td><td>%= record[0].getWin44() %</td><td>%= record[0].getLose44() + %</td><td>%= record[0].getTie44() %</td></tr>
-        <tr><td>5 * 5</td><td>%= record[0].getGame55() %</td><td>%= record[0].getWin55() %</td><td>%= record[0].getLose55() + %</td><td>%= record[0].getTie55() %</td></tr>
-        </table>
-        
-        <a href=/mainpage>mainpage</a> <br>
+        <a  href="/client/login.html">Log In/Register</a>
+        <a href="/client/search.html">Search Players</a>
+      </div>
+    <h1 id = "username"></h1>
+    <table id = "table">
+        <th>Number of Games</th><th>Win</th><th>Lose</th><th>Tie</th></tr>    
+    </table>
+    <button onclick="friend()">Add Friend</button>
+    <script>
+        let socket = io();
+        let queryString = window.location.search;
+        let params= new URLSearchParams(queryString);
+        let username = params.get("player");
+        if(username == null && getId() == "null"){
+            window.location.href = "/client/login.html";
+        }
+        let header = document.getElementById("username");
+        header.innerHTML = username;
+
+        socket.on('redirect', function(destination) {
+            window.location.href = destination;
+        });
+
+        socket.on('test', function () {
+            //socket.emit('test', getId());
+            socket.emit("need_player", username);
+        })
+
+        socket.on("here_player", function(wins, losses, ties){
+            let table = document.getElementById("leaders");
+            let row = table.insertRow(1);
+            let cell = row.insertCell(0);
+            let cell2 = row.insertCell(1);
+            let cell3 = row.insertCell(2);
+            let cell4 = row.insertCell(3);
+            cell.innerHTML = wins + losses + ties;
+            cell2.innerHTML = wins;
+            cell3.innerHTML = losses;
+            cell4.innerHTML = ties;
+        })
+
+
+        function getId() {
+            let returned = "null";
+            try {
+                returned = document.cookie
+                    .split('; ')
+                    .find(row => row.startsWith('id='))
+                    .split('=')[1];
+            }
+            catch{
+                
+            }
+            return returned;
+        }
+
+        function friend(){
+            socket.emit("add_friend", username, getId());
+        }
+    </script>
 </body>

@@ -36,7 +36,17 @@
 		}
 		</style>
 	</head>
+    
 	<body>
+        <div class="topnav">
+            <a href="/client/home.html">Home</a>
+            <a class = "active" href="/client/login.html">Log In/Register</a>
+            <a href="/client/waiting.html">TicTacToe</a>
+            <a href="/client/leaderboard.html">Leaderboard</a>
+            <a href="/client/profile.html">Profile</a>
+            <a href="/client/friends.html">Friends</a>
+            <a href="/client/search.html">Search Players</a>
+          </div>
 	<h1>Register your information!</h1>
 		<div class="login-form">
 			<h1>Login Form</h1>
@@ -45,7 +55,9 @@
 				<input type="password" name="password" placeholder="Password" id = password>
 				<input type="button", value="Registration" onclick="register()">
 			</form>
+            <b id="warning"></b>
 		</div>
+        
         <script>
             let socket = io();
       
@@ -62,6 +74,11 @@
                   document.cookie = "id =" + playerId + ";path=/";  
                   window.location.href = "/client/waiting.html";
               });
+
+              socket.on('bad_register', function(){
+                let text = document.getElementById("warning");
+                text.innerHTML = "That username already exists!";
+              })
       
             function register() {
               let username = document.getElementById("username").value;

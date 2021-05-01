@@ -15,7 +15,7 @@ var startSQL = mysql.createConnection({
 });
 
 app.get('/', function (req, res) {
-  res.sendFile(__dirname + '/client/profile.html');
+  res.sendFile(__dirname + '/client/home.html');
   //res.sendFile(__dirname + '/client/style.css');
 });
 app.use('/client', express.static(__dirname + '/client'));
@@ -38,7 +38,6 @@ let idinc = 0;
 let waiting = null;
 //Runs when a new client connects
 io.sockets.on('connection', function (socket) {
-  console.log("connected");
   //Give the client an id and potentially a player so they can tell us whether they are p1 p2 or spectator
   socket.emit("test");
 
@@ -162,8 +161,36 @@ io.sockets.on('connection', function (socket) {
   socket.on("need_leaders", function() {
     let leaders = new Array(10);
     let wins = new Array(10);
-    //POPULATE LEADERS AND FRIENDS
+    //POPULATE LEADERS AND WINS
     socket.emit("here_leaders", leaders, wins);
+  })
+
+  socket.on("need_player", function(username){
+    let wins = 0;
+    let losses = 0;
+    let ties = 0;
+    //POPULATE WINS,LOSSES,TIES
+    socket.emit("here_player", wins, losses, ties);
+  })
+
+  socket.on("add_friend", function(username, id){
+    let playerId = id;
+    if(playerId == "null"){
+      socket.emit('redirect', '/client/login.html');
+    }
+    else{
+      //ADD USERNAME TO ID'S FRIENDS
+    }
+  })
+
+  socket.on("search", function(username){
+    //CHECK IF USERNAME EXISTS IN DATABASE
+    if(exists){
+      socket.emit("redirect", "/client/profile?player=" + username);
+    }
+    else{
+      socket.emit("bad_search");
+    }
   })
 
   socket.on('turnCheck', function (clickedBy) {
@@ -264,7 +291,7 @@ io.sockets.on('connection', function (socket) {
 
     } else if (res == game.player2.symbol) {
       socket.emit('gameEnd', 2);
-      SOCKET6_LIST[game.player1.id].emit('gameEnd', 2);
+      SOCKET_LIST[game.player1.id].emit('gameEnd', 2);
       game.board_full = true
       gameEnd(game);
     } else if (game.board_full) {
