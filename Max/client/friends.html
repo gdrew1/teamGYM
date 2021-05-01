@@ -10,10 +10,19 @@
 
 <body>
     <div class="topnav">
+        <a href="/client/main.html">Home</a>
         <a href="/client/waiting.html">TicTacToe</a>
         <a href="/client/leaderboard.html">Leaderboard</a>
         <a href="/client/profile.html">Profile</a>
         <a class = "actice" href="#Friends">Friends</a>
     </div>
-    Friends
+    <table border = "1">
+        <tr><th>User ID</th><th>User Name</th><th>Email</th></tr>
+        <% for (var i = 0; i < User.length; i++) {%>
+        <tr><td><%= User[i].getId() %></td>
+        <td><%= User[i].getName() %></td>
+        <td><%= User[i].getEmail() %></td>
+        </tr>
+        <%}%>
+        </table>
 </body>

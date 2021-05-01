@@ -1,0 +1,111 @@
+body{
+	font-size: 20px;
+	font-family: "arial black";
+}
+table{
+  width: 100%;
+  border-collapse:separate;
+  border-spacing: 0;
+}
+
+table th:first-child{
+  border-radius: 5px 0 0 0;
+}
+
+table th:last-child{
+  border-radius: 0 5px 0 0;
+  border-right: 1px solid #3c6690;
+}
+
+td {
+min-width:  10em
+}
+
+table th{
+  text-align: center;
+  color:white;
+  background: linear-gradient(#829ebc,#225588);
+  border-left: 1px solid #3c6690;
+  border-top: 1px solid #3c6690;
+  border-bottom: 1px solid #3c6690;
+  box-shadow: 0px 1px 1px rgba(255,255,255,0.3) inset;
+  width: 25%;
+  padding: 10px 0;
+}
+
+table td{
+  text-align: center;
+  border-left: 1px solid #a8b7c5;
+  border-bottom: 1px solid #a8b7c5;
+  border-top:none;
+  box-shadow: 0px -3px 5px 1px #eee inset;
+  width: 25%;
+  padding: 10px 0;
+}
+
+table td:last-child{
+  border-right: 1px solid #a8b7c5;
+}
+
+table tr:last-child td:first-child {
+  border-radius: 0 0 0 5px;
+}
+
+table tr:last-child td:last-child {
+  border-radius: 0 0 5px 0;
+}
+
+/*
+Update below
+04/30/2021
+Add mainpage css style setting
+*/
+
+ul.mainnav {
+	list-style-type: none;
+	margin: 0;
+	padding: 0;
+	width: 200px;
+	background-color: #f1f1f1;
+	position: relative;
+	overflow: auto;
+}
+ul.mainnav li a {
+	display: block;
+	color: #000000;
+	padding: 8px 16px;
+	text-decoration: none;
+}
+ul.mainnav li a.active {
+	background-color: green;
+	color: white;
+}
+ul.mainnav li a:hover:not(.active) {
+	background-color: #1b2538;
+	color: white;
+}
+div.content {
+	margin-left: 25%;
+	padding: 1px 16px;
+	height: 1000px;
+}
+@media screen and (max-width: 900px) {
+	ul.mainnav {
+		width: 100%;
+		height: auto;
+		position: relative;
+	}
+	ul.mainnav li a {
+		float: left;
+		padding: 15px;
+	}
+	div.content {
+		margin-left: 0;
+	}
+}
+@media screen and (max-width: 480px) {
+	ul.mainnav li a {
+		text-align: center;
+		float: none;
+	}
+}

@@ -1,0 +1,89 @@
+<!DOCTYPE html>
+<html>
+	<head>
+        <script src="/socket.io/socket.io.js"></script>
+		<meta charset="utf-8">
+		<title>Login Form Tutorial</title>
+		<style>
+		.login-form {
+			width: 300px;
+			margin: 0 auto;
+			font-family: Tahoma, Geneva, sans-serif;
+		}
+		.login-form h1 {
+			text-align: center;
+			color: #4d4d4d;
+			font-size: 24px;
+			padding: 20px 0 20px 0;
+		}
+		.login-form input[type="password"],
+		.login-form input[type="text"] {
+			width: 100%;
+			padding: 15px;
+			border: 1px solid #dddddd;
+			margin-bottom: 15px;
+			box-sizing:border-box;
+		}
+		.login-form input[type="submit"] {
+			width: 100%;
+			padding: 15px;
+			background-color: #535b63;
+			border: 0;
+			box-sizing: border-box;
+			cursor: pointer;
+			font-weight: bold;
+			color: #ffffff;
+		}
+		</style>
+	</head>
+	<body>
+	<h1>Register your information!</h1>
+		<div class="login-form">
+			<h1>Login Form</h1>
+			<form action="auth" method="POST">
+				<input type="text" name="username" placeholder="Username" id = "username">
+				<input type="password" name="password" placeholder="Password" id = password>
+				<input type="button", value="Registration" onclick="register()">
+			</form>
+		</div>
+        <script>
+            let socket = io();
+      
+            socket.on('redirect', function(destination) {
+                  window.location.href = destination;
+              });
+      
+              socket.on('test', function () {
+                  //socket.emit('test', getId());
+                  console.log(getId());
+              })
+              
+              socket.on('newPlayer', function (playerId) {
+                  document.cookie = "id =" + playerId + ";path=/";  
+                  window.location.href = "/client/waiting.html";
+              });
+      
+            function register() {
+              let username = document.getElementById("username").value;
+              let password = document.getElementById("password").value;
+              socket.emit('register', username, password);
+            };
+      
+            function getId() {
+                  let returned = "null";
+                  try {
+                      returned = document.cookie
+                          .split('; ')
+                          .find(row => row.startsWith('id='))
+                          .split('=')[1];
+                  }
+                  catch{
+                      
+                  }
+                  return returned;
+              }
+      
+            
+          </script>
+	</body>
+</html>
