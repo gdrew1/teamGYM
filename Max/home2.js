@@ -6,7 +6,7 @@ let server = require('http').createServer(app);
 
 let mysql = require('mysql');
 
-var connection = mysql.createConnection({
+var startSQL = mysql.createConnection({
     host: 'ec2-18-222-6-224.us-east-2.compute.amazonaws.com',
     user: 'babyboiremote',
     password: 'babyboi',
@@ -97,34 +97,54 @@ io.sockets.on('connection', function (socket) {
 
   socket.on('login', function(username, password) {
     let playerId;
-    let passed = false; //passed will be the value for if they log in
-    //put database check code here
-    if(passed){
+    //database check code
+    startSQL.query('SELECT * FROM users AS data WHERE username = \'' + username + '\'', function(error, results, fields) {
+    if (error)
+    {
+      throw error;
+    } 
+    else if(password == results[0].password)
+    {
+      console.log("passed is true");
       playerId = Math.random();
       SOCKET_LIST[playerId] = socket;
       SOCKETID_LIST[socket.id] = playerId;
       USERNAME_LIST[playerId] = username;
       socket.emit("newPlayer", playerId);
-    }
-    else{
+    } 
+    else 
+    {
       socket.emit('bad_login');
     }
+    })
   })
 
   socket.on('register', function(username, password) {
     let playerId;
-    let passed = false;//check if username is unique
-    if(passed){
-      playerId = Math.random();
-      SOCKET_LIST[playerId] = socket;
-      SOCKETID_LIST[socket.id] = playerId;
-      USERNAME_LIST[playerId] = username;
-      socket.emit("newPlayer", playerId);
-      //add to database
-    }
-    else{
+    //check if username is unique
+    startSQL.query('SELECT * FROM users AS data WHERE username = \'' + username + '\'', function(error, results, fields){
+      if (error)
+      {
+        throw error;
+      }
+      if(results.length == 0)
+      {
+        startSQL.query('INSERT INTO users(username, password) VALUES (\'' + username + '\',\'' + password + '\')', function(error, results, fields){
+        if (error)
+        {
+        throw error;
+        } 
+        })
+        playerId = Math.random();
+        SOCKET_LIST[playerId] = socket;
+        SOCKETID_LIST[socket.id] = playerId;
+        USERNAME_LIST[playerId] = username;
+        socket.emit("newPlayer", playerId);
+      }
+      else{
       socket.emit('bad_register');
-    }
+      }
+    })
   })
 
   socket.on("need_friends", function(id) {
