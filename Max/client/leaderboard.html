@@ -15,5 +15,50 @@
         <a href="/client/profile.html">Profile</a>
         <a href="/client/friends.html">Friends</a>
     </div>
-    Leaderboard
+    <body>
+        <table id = "leaders">
+        <tr><th>#</th><th>User Name</th><th>Wins</th></tr>
+    </table>
+    <script>
+        
+        let socket = io();
+
+        socket.on('redirect', function(destination) {
+            window.location.href = destination;
+        });
+
+        socket.on('test', function () {
+            //socket.emit('test', getId());
+            socket.emit("need_leaders");
+        })
+
+        socket.on("here_leaders", function(leaders, wins){
+            let table = document.getElementById("leaders");
+            for(let i = 0; i < leaders.length; i++){
+                let row = table.insertRow(i + 1);
+                let cell = row.insertCell(0);
+                let cell2 = row.insertCell(1);
+                let cell3 = row.insertCell(2);
+                cell.innerHTML = i + 1;
+                cell2.innerHTML = leaders[i];
+                cell3.innerHTML = wins[i];
+            }
+        })
+        
+
+        function getId() {
+            let returned = "null";
+            try {
+                returned = document.cookie
+                    .split('; ')
+                    .find(row => row.startsWith('id='))
+                    .split('=')[1];
+            }
+            catch{
+                
+            }
+            return returned;
+        }
+
+    </script>
 </body>

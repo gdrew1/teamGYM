@@ -159,6 +159,13 @@ io.sockets.on('connection', function (socket) {
     }
   })
 
+  socket.on("need_leaders", function() {
+    let leaders = new Array(10);
+    let wins = new Array(10);
+    //POPULATE LEADERS AND FRIENDS
+    socket.emit("here_leaders", leaders, wins);
+  })
+
   socket.on('turnCheck', function (clickedBy) {
     console.log(clickedBy);
     console.log(players);

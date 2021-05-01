@@ -1,0 +1,141 @@
+<html>
+  <head>
+    <title>Search Player</title>
+    <script src="/socket.io/socket.io.js"></script>
+    
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <meta http-equiv="X-UA-Compatible" content="ie=edge" />
+    <title>Leaderboard</title>
+    <link rel="stylesheet" type="text/css" href="/client/style.css"/>
+  </head>
+  <style>
+    .topnav {
+  background-color: #333;
+  overflow: hidden;
+}
+
+/* Style the links inside the navigation bar */
+.topnav a {
+  float: left;
+  color: #f2f2f2;
+  text-align: center;
+  padding: 14px 16px;
+  text-decoration: none;
+  font-size: 17px;
+}
+
+/* Change the color of links on hover */
+.topnav a:hover {
+  background-color: #ddd;
+  color: black;
+}
+
+/* Add a color to the active/current link */
+.topnav a.active {
+  background-color: #4CAF50;
+  color: white;
+}
+		.login-form {
+			width: 300px;
+			margin: 0 auto;
+			font-family: Tahoma, Geneva, sans-serif;
+		}
+		.login-form h1 {
+			text-align: center;
+			color: #4d4d4d;
+			font-size: 24px;
+			padding: 20px 0 20px 0;
+		}
+		.login-form input[type="password"],
+		.login-form input[type="text"] {
+			width: 100%;
+			padding: 15px;
+			border: 1px solid #dddddd;
+			margin-bottom: 15px;
+			box-sizing:border-box;
+		}
+		.login-form input[type="submit"] {
+			width: 100%;
+			padding: 15px;
+			background-color: #535b63;
+			border: 0;
+			box-sizing: border-box;
+			cursor: pointer;
+			font-weight: bold;
+			color: #ffffff;
+		}
+		</style>
+	</head>
+  <body>
+
+    <div class="topnav">
+      <a href="/client/waiting.html">TicTacToe</a>
+      <a class = "active" href="#Leaderboard">Leaderboard</a>
+      <a href="/client/profile.html">Profile</a>
+      <a href="/client/friends.html">Friends</a>
+    </div>
+    <div class="login-form">
+      <h1>Enter your user information for Login.</h1>
+      <form action="mainpage" method = "GET" id="login">
+      
+        <table>
+          <tr><td>User Name: </td>
+              <td><input type="text" name="userName" placeholder="Username" id="username"></td>
+          </tr>
+          <tr><td>Password: </td>
+              <td><input type="password" name="password" placeholder="password" id = password></td>
+          </tr>
+          <tr><td><input type="button" value="Login" onclick="login()"></td></tr>
+        </table>
+      </form>
+    </div>s
+    <br>
+    Do not have account?<br>
+    Visit to <a href="/client/registration.html">Registration Page</a>.
+
+    <script>
+      let socket = io();
+
+      socket.on('redirect', function(destination) {
+            window.location.href = destination;
+        });
+
+        socket.on('test', function () {
+            //socket.emit('test', getId());
+            console.log(getId());
+        })
+        
+        socket.on('newPlayer', function (playerId) {
+            if(getId() == "null"){
+            document.cookie = "id =" + playerId + ";path=/";  
+            }
+            window.location.href = "/client/waiting.html";
+        });
+
+      function login() {
+        let username = document.getElementById("username").value;
+        let password = document.getElementById("password").value;
+        socket.emit('login', username, password);
+      };
+
+      function getId() {
+            let returned = "null";
+            try {
+                returned = document.cookie
+                    .split('; ')
+                    .find(row => row.startsWith('id='))
+                    .split('=')[1];
+            }
+            catch{
+                
+            }
+            return returned;
+        }
+
+      
+    </script>
+
+
+  </body>
+</html>
