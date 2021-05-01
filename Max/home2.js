@@ -87,6 +87,8 @@ io.sockets.on('connection', function (socket) {
   socket.on('login', function(username, password) {
     let playerId;
     let passed = false; //passed will be the value for if they log in
+    console.log(username);
+    console.log(password);
     //put database check code here
     if(passed){
       playerId = Math.random();

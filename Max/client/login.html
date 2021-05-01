@@ -95,7 +95,7 @@
     Visit to <a href="/webproject_teamGYM/userInsert.html">Registration Page</a>.
 
     <script>
-      /*let socket = io();
+      let socket = io();
 
       socket.on('redirect', function(destination) {
             window.location.href = destination;
@@ -110,10 +110,10 @@
             if(getId() == "null"){
             document.cookie = "id =" + playerId + ";path=/";  
             }
-            window.location.href = /client/waiting.html;
-        });*/
+            window.location.href = "/client/waiting.html";
+        });
 
-      const login = () => {
+      function login() {
         let username = document.getElementById("username").value;
         let password = document.getElementById("password").value;
         socket.emit('login', username, password);
