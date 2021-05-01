@@ -4,6 +4,16 @@ let app = express();
 
 let server = require('http').createServer(app);
 
+let mysql = require('mysql');
+
+var connection = mysql.createConnection({
+    host: 'ec2-18-222-6-224.us-east-2.compute.amazonaws.com',
+    user: 'babyboiremote',
+    password: 'babyboi',
+    database: 'myDB',
+    port: '3306'
+});
+
 app.get('/', function (req, res) {
   res.sendFile(__dirname + '/client/profile.html');
   //res.sendFile(__dirname + '/client/style.css');
