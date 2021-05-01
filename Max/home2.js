@@ -127,6 +127,18 @@ io.sockets.on('connection', function (socket) {
     }
   })
 
+  socket.on("need_friends", function(id) {
+    let playerId = id;
+    if(playerId == "null"){
+      socket.emit('redirect', '/client/login.html');
+    }
+    else{
+      let friends = [];
+      //POPULATE FRIENDS
+      socket.emit('here_friends', friends);
+    }
+  })
+
   socket.on('turnCheck', function (clickedBy) {
     console.log(clickedBy);
     console.log(players);
