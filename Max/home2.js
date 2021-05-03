@@ -98,8 +98,7 @@ io.sockets.on('connection', function(socket) {
         startSQL.query('SELECT * FROM users AS data WHERE username = \'' + username + '\'', function(error, results, fields) {
             if (error) {
                 throw error;
-            } else if (password == results[0].password) {
-                console.log("passed is true");
+            } else if (results.length != 0 && password == results[0].password) {
                 playerId = Math.random();
                 SOCKET_LIST[playerId] = socket;
                 SOCKETID_LIST[socket.id] = playerId;
