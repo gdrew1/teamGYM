@@ -222,14 +222,10 @@ io.sockets.on('connection', function(socket) {
         }
     })
     socket.on('turnCheck', function(clickedBy) {
-        console.log(clickedBy);
-        console.log(players);
+        
         let game = (games[players[clickedBy.id].gameId]);
         if (game.play_board[clickedBy.location] == "" && !game.board_full) {
-            console.log("test");
-            console.log(game.player1.id == clickedBy.id);
-            console.log(game.player1.move);
-            console.log(game.player1.id == clickedBy.id && game.player1.move);
+            
             if (game.player1.id == clickedBy.id && game.player1.move == true) {
                 game.play_board[clickedBy.location] = game.player1.symbol;
                 console.log(game.play_board[clickedBy.location]);
@@ -237,12 +233,14 @@ io.sockets.on('connection', function(socket) {
                 clickedBy.symbol = "X";
                 socket.emit('update', clickedBy);
                 SOCKET_LIST[game.player2.id].emit('update', clickedBy);
+                check_for_winner(game);
             } else if (game.player2.id == clickedBy.id && game.player2.move) {
                 game.play_board[clickedBy.location] = game.player2.symbol;
                 update(game);
                 clickedBy.symbol = "O";
                 socket.emit('update', clickedBy);
                 SOCKET_LIST[game.player1.id].emit('update', clickedBy);
+                check_for_winner(game);
             }
         }
     })
@@ -251,7 +249,7 @@ io.sockets.on('connection', function(socket) {
         game.player1.move = !game.player1.move;
         game.player2.move = !game.player2.move;
         check_board_complete(game);
-        check_for_winner(game);
+        
 
     }
 
