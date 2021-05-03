@@ -214,7 +214,7 @@ io.sockets.on('connection', function(socket) {
                 } else if (results.length == 0) {
                     socket.emit("bad_search");
                 } else {
-                    socket.emit("redirect", "/client/profile?player=" + username);
+                    socket.emit("redirect", "/client/profile.html?player=" + username);
                 }
             })
         } else {
