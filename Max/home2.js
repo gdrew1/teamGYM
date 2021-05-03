@@ -179,15 +179,22 @@ io.sockets.on('connection', function(socket) {
         })
     })
 
-    socket.on("need_player", function(username) {
+    socket.on("need_player", function(name, id) {
         let wins = 0;
         let losses = 0;
         let ties = 0;
+        let username = name;
+        console.log(name);
+        console.log(id);
+        console.log(USERNAME_LIST[id]);
+        if(username == null || username == "null"){
+          username = USERNAME_LIST[id];
+        }
         startSQL.query('SELECT * FROM leaderboard AS data WHERE username = \'' + username + '\'', function(error, results, fields) {
             if (error) {
                 throw error;
             } else if (results.length != 0) {
-                socket.emit("here_player", results[0].wins, results[0].losses, results[0].ties);
+                socket.emit("here_player", results[0].wins, results[0].losses, results[0].ties, username);
             }
         })
     })
