@@ -206,11 +206,13 @@ io.sockets.on('connection', function(socket) {
         if (playerId == "null" || USERNAME_LIST[id] == null) {
             socket.emit('redirect', '/client/login.html');
         } else {
-            startSQL.query('INSERT INTO ' + USERNAME_LIST[playerId] + ' VALUES (\'' + username + '\')', function(error, results, fields) {
-                if (error) {
-                    throw error;
-                }
-            })
+            if (username != USERNAME_LIST[playerId]) {
+                startSQL.query('INSERT INTO ' + USERNAME_LIST[playerId] + ' VALUES (\'' + username + '\')', function(error, results, fields) {
+                    if (error) {
+                        throw error;
+                    }
+                })
+            }
         }
     })
 
