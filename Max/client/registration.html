@@ -43,7 +43,7 @@
             <a class = "active" href="/client/login.html">Log In/Register</a>
             <a href="/client/waiting.html">TicTacToe</a>
             <a href="/client/leaderboard.html">Leaderboard</a>
-            <a href="/client/profile.html">Profile</a>
+            <a href="/client/profilebutnofriends.html">Profile</a>
             <a href="/client/friends.html">Friends</a>
             <a href="/client/search.html">Search Players</a>
           </div>
@@ -72,7 +72,7 @@
               
               socket.on('newPlayer', function (playerId) {
                   document.cookie = "id =" + playerId + ";path=/";  
-                  window.location.href = "/client/waiting.html";
+                  window.location.href = "/client/home.html";
               });
 
               socket.on('bad_register', function(){
