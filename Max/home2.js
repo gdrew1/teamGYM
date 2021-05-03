@@ -326,7 +326,7 @@ io.sockets.on('connection', function(socket) {
                 if (error) {
                     throw error;
                 } else {
-                    startSQL.query('UPDATE leaderboard SET wins = ' + parseInt(results[0].wins) + 1 + ' WHERE username = \'' + USERNAME_LIST[game.player1.id] + '\'', function(error, results, fields) {
+                    startSQL.query('UPDATE leaderboard SET wins = ' + (results[0].wins + 1) + ' WHERE username = \'' + USERNAME_LIST[game.player1.id] + '\'', function(error, results, fields) {
                         if (error) {
                             throw error;
                         }
@@ -337,7 +337,7 @@ io.sockets.on('connection', function(socket) {
                 if (error) {
                     throw error;
                 } else {
-                    startSQL.query('UPDATE leaderboard SET losses = ' + parseInt(results[0].losses) + 1 + ' WHERE username = \'' + USERNAME_LIST[game.player2.id] + '\'', function(error, results, fields) {
+                    startSQL.query('UPDATE leaderboard SET losses = ' + (results[0].losses + 1) + ' WHERE username = \'' + USERNAME_LIST[game.player2.id] + '\'', function(error, results, fields) {
                         if (error) {
                             throw error;
                         }
@@ -354,7 +354,7 @@ io.sockets.on('connection', function(socket) {
                 if (error) {
                     throw error;
                 } else {
-                    startSQL.query('UPDATE leaderboard SET wins = ' + parseInt(results[0].wins) + 1 + ' WHERE username = \'' + USERNAME_LIST[game.player2.id] + '\'', function(error, results, fields) {
+                    startSQL.query('UPDATE leaderboard SET wins = ' + (results[0].wins + 1) + ' WHERE username = \'' + USERNAME_LIST[game.player2.id] + '\'', function(error, results, fields) {
                         if (error) {
                             throw error;
                         }
@@ -365,7 +365,7 @@ io.sockets.on('connection', function(socket) {
                 if (error) {
                     throw error;
                 } else {
-                    startSQL.query('UPDATE leaderboard SET losses = ' + parseInt(results[0].losses) + 1 + ' WHERE username = \'' + USERNAME_LIST[game.player1.id] + '\'', function(error, results, fields) {
+                    startSQL.query('UPDATE leaderboard SET losses = ' + (results[0].losses + 1) + ' WHERE username = \'' + USERNAME_LIST[game.player1.id] + '\'', function(error, results, fields) {
                         if (error) {
                             throw error;
                         }
@@ -381,7 +381,7 @@ io.sockets.on('connection', function(socket) {
                 if (error) {
                     throw error;
                 } else {
-                    startSQL.query('UPDATE leaderboard SET ties = ' + parseInt(results[0].ties) + 1 + ' WHERE username = \'' + USERNAME_LIST[game.player2.id] + '\'', function(error, results, fields) {
+                    startSQL.query('UPDATE leaderboard SET ties = ' + (results[0].ties + 1) + ' WHERE username = \'' + USERNAME_LIST[game.player2.id] + '\'', function(error, results, fields) {
                         if (error) {
                             throw error;
                         }
@@ -392,7 +392,7 @@ io.sockets.on('connection', function(socket) {
                 if (error) {
                     throw error;
                 } else {
-                    startSQL.query('UPDATE leaderboard SET ties = ' + parseInt(results[0].ties) + 1 + ' WHERE username = \'' + USERNAME_LIST[game.player1.id] + '\'', function(error, results, fields) {
+                    startSQL.query('UPDATE leaderboard SET ties = ' + (results[0].ties + 1) + ' WHERE username = \'' + USERNAME_LIST[game.player1.id] + '\'', function(error, results, fields) {
                         if (error) {
                             throw error;
                         }
@@ -438,7 +438,7 @@ io.sockets.on('connection', function(socket) {
                     if (error) {
                         throw error;
                     } else {
-                        startSQL.query('UPDATE leaderboard SET wins = ' + parseInt(results[0].wins) + 1 + ' WHERE username = \'' + USERNAME_LIST[game.player2.id] + '\'', function(error, results, fields) {
+                        startSQL.query('UPDATE leaderboard SET wins = ' + (results[0].wins + 1) + ' WHERE username = \'' + USERNAME_LIST[game.player2.id] + '\'', function(error, results, fields) {
                             if (error) {
                                 throw error;
                             }
@@ -449,7 +449,7 @@ io.sockets.on('connection', function(socket) {
                     if (error) {
                         throw error;
                     } else {
-                        startSQL.query('UPDATE leaderboard SET losses = ' + parseInt(results[0].losses) + 1 + ' WHERE username = \'' + USERNAME_LIST[game.player1.id] + '\'', function(error, results, fields) {
+                        startSQL.query('UPDATE leaderboard SET losses = ' + (results[0].losses + 1) + ' WHERE username = \'' + USERNAME_LIST[game.player1.id] + '\'', function(error, results, fields) {
                             if (error) {
                                 throw error;
                             }
@@ -465,7 +465,7 @@ io.sockets.on('connection', function(socket) {
                     if (error) {
                         throw error;
                     } else {
-                        startSQL.query('UPDATE leaderboard SET wins = ' + parseInt(results[0].wins) + 1 + ' WHERE username = \'' + USERNAME_LIST[game.player1.id] + '\'', function(error, results, fields) {
+                        startSQL.query('UPDATE leaderboard SET wins = ' + (results[0].wins + 1) + ' WHERE username = \'' + USERNAME_LIST[game.player1.id] + '\'', function(error, results, fields) {
                             if (error) {
                                 throw error;
                             }
@@ -476,7 +476,7 @@ io.sockets.on('connection', function(socket) {
                     if (error) {
                         throw error;
                     } else {
-                        startSQL.query('UPDATE leaderboard SET losses = ' + parseInt(results[0].losses) + 1 + ' WHERE username = \'' + USERNAME_LIST[game.player2.id] + '\'', function(error, results, fields) {
+                        startSQL.query('UPDATE leaderboard SET losses = ' + (results[0].losses + 1) + ' WHERE username = \'' + USERNAME_LIST[game.player2.id] + '\'', function(error, results, fields) {
                             if (error) {
                                 throw error;
                             }
@@ -490,11 +490,10 @@ io.sockets.on('connection', function(socket) {
             }
             delete SOCKET_LIST[socket.id];
             delete SOCKET_LIST[socket.id];
-        } 
-        else if (waiting == SOCKETID_LIST[socket.id]){
-          waiting = null;
+        } else if (waiting == SOCKETID_LIST[socket.id]) {
+            waiting = null;
 
-        }else {
+        } else {
             currentGame = null;
         }
     });
@@ -514,7 +513,7 @@ io.sockets.on('connection', function(socket) {
                     if (error) {
                         throw error;
                     } else {
-                        startSQL.query('UPDATE leaderboard SET wins = ' + parseInt(results[0].wins) + 1 + ' WHERE username = \'' + USERNAME_LIST[game.player2.id] + '\'', function(error, results, fields) {
+                        startSQL.query('UPDATE leaderboard SET wins = ' + (results[0].wins + 1) + ' WHERE username = \'' + USERNAME_LIST[game.player2.id] + '\'', function(error, results, fields) {
                             if (error) {
                                 throw error;
                             }
@@ -525,7 +524,7 @@ io.sockets.on('connection', function(socket) {
                     if (error) {
                         throw error;
                     } else {
-                        startSQL.query('UPDATE leaderboard SET losses = ' + parseInt(results[0].losses) + 1 + ' WHERE username = \'' + USERNAME_LIST[game.player1.id] + '\'', function(error, results, fields) {
+                        startSQL.query('UPDATE leaderboard SET losses = ' + (results[0].losses + 1) + ' WHERE username = \'' + USERNAME_LIST[game.player1.id] + '\'', function(error, results, fields) {
                             if (error) {
                                 throw error;
                             }
@@ -542,7 +541,7 @@ io.sockets.on('connection', function(socket) {
                     if (error) {
                         throw error;
                     } else {
-                        startSQL.query('UPDATE leaderboard SET wins = ' + parseInt(results[0].wins) + 1 + ' WHERE username = \'' + USERNAME_LIST[game.player1.id] + '\'', function(error, results, fields) {
+                        startSQL.query('UPDATE leaderboard SET wins = ' + (results[0].wins + 1) + ' WHERE username = \'' + USERNAME_LIST[game.player1.id] + '\'', function(error, results, fields) {
                             if (error) {
                                 throw error;
                             }
@@ -553,7 +552,7 @@ io.sockets.on('connection', function(socket) {
                     if (error) {
                         throw error;
                     } else {
-                        startSQL.query('UPDATE leaderboard SET losses = ' + parseInt(results[0].losses) + 1 + ' WHERE username = \'' + USERNAME_LIST[game.player2.id] + '\'', function(error, results, fields) {
+                        startSQL.query('UPDATE leaderboard SET losses = ' + (results[0].losses + 1) + ' WHERE username = \'' + USERNAME_LIST[game.player2.id] + '\'', function(error, results, fields) {
                             if (error) {
                                 throw error;
                             }
