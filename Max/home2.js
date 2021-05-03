@@ -184,13 +184,12 @@ io.sockets.on('connection', function(socket) {
         let losses = 0;
         let ties = 0;
         let username = name;
-        if(username == null || username == "null"){
-          if(USERNAME_LIST[id] == null){
-            socket.emit('redirect', '/client/login.html');
-          }
-          else{
-            username = USERNAME_LIST[id];
-          }
+        if (username == null || username == "null") {
+            if (USERNAME_LIST[id] == null) {
+                socket.emit('redirect', '/client/login.html');
+            } else {
+                username = USERNAME_LIST[id];
+            }
         }
         startSQL.query('SELECT * FROM leaderboard AS data WHERE username = \'' + username + '\'', function(error, results, fields) {
             if (error) {
@@ -206,10 +205,16 @@ io.sockets.on('connection', function(socket) {
         if (playerId == "null" || USERNAME_LIST[id] == null) {
             socket.emit('redirect', '/client/login.html');
         } else {
-            if (username != USERNAME_LIST[playerId]) {
-                startSQL.query('INSERT INTO ' + USERNAME_LIST[playerId] + ' VALUES (\'' + username + '\')', function(error, results, fields) {
+            if (username != USERNAME_LIST[playerId] && username != null) {
+                startSQL.query('SELECT * FROM ' + USERNAME_LIST[playerId] + ' AS data WHERE friends = \'' + username + '\'', function(error, results, fields) {
                     if (error) {
                         throw error;
+                    } else if (results.length == 0) {
+                        startSQL.query('INSERT INTO ' + USERNAME_LIST[playerId] + ' VALUES (\'' + username + '\')', function(error, results, fields) {
+                            if (error) {
+                                throw error;
+                            }
+                        })
                     }
                 })
             }
