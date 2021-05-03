@@ -78,7 +78,7 @@ io.sockets.on('connection', function(socket) {
     //tell client their Id.
     socket.on('test', function(id) {
         let playerId = id;
-        if (playerId == "null") {
+        if (playerId == "null" || USERNAME_LIST[id] == null) {
             //playerId = Math.random();
             socket.emit('redirect', '/client/login.html');
 
@@ -146,7 +146,7 @@ io.sockets.on('connection', function(socket) {
 
     socket.on("need_friends", function(id) {
         let playerId = id;
-        if (playerId == "null") {
+        if (playerId == "null" || USERNAME_LIST[id] == null) {
             socket.emit('redirect', '/client/login.html');
         } else {
             let friends = [];
@@ -184,11 +184,13 @@ io.sockets.on('connection', function(socket) {
         let losses = 0;
         let ties = 0;
         let username = name;
-        console.log(name);
-        console.log(id);
-        console.log(USERNAME_LIST[id]);
         if(username == null || username == "null"){
-          username = USERNAME_LIST[id];
+          if(USERNAME_LIST[id] == null){
+            socket.emit('redirect', '/client/login.html');
+          }
+          else{
+            username = USERNAME_LIST[id];
+          }
         }
         startSQL.query('SELECT * FROM leaderboard AS data WHERE username = \'' + username + '\'', function(error, results, fields) {
             if (error) {
@@ -201,7 +203,7 @@ io.sockets.on('connection', function(socket) {
 
     socket.on("add_friend", function(username, id) {
         let playerId = id;
-        if (playerId == "null") {
+        if (playerId == "null" || USERNAME_LIST[id] == null) {
             socket.emit('redirect', '/client/login.html');
         } else {
             startSQL.query('INSERT INTO ' + USERNAME_LIST[playerId] + ' VALUES (\'' + username + '\')', function(error, results, fields) {
