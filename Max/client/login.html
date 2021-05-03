@@ -93,7 +93,7 @@
         </table>
         <b id="warning"></b>
       </form>
-    </div>s
+    </div>
     <br>
     Do not have account?<br>
     Visit to <a href="/client/registration.html">Registration Page</a>.
@@ -111,9 +111,7 @@
         })
         
         socket.on('newPlayer', function (playerId) {
-            if(getId() == "null"){
             document.cookie = "id =" + playerId + ";path=/";  
-            }
             window.location.href = "/client/waiting.html";
         });
 
