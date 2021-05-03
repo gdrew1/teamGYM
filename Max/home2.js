@@ -427,7 +427,6 @@ io.sockets.on('connection', function(socket) {
 
     //GAMEEND!!!!
     socket.on('disconnect', function() {
-
         console.log("disconnected");
         if (players[SOCKETID_LIST[socket.id]] != null) {
             console.log("first case passed");
@@ -491,7 +490,11 @@ io.sockets.on('connection', function(socket) {
             }
             delete SOCKET_LIST[socket.id];
             delete SOCKET_LIST[socket.id];
-        } else {
+        } 
+        else if (waiting == SOCKETID_LIST[socket.id]){
+          waiting = null;
+
+        }else {
             currentGame = null;
         }
     });
