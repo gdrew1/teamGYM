@@ -4,9 +4,9 @@ let app = express();
 
 let server = require('http').createServer(app);
 
-app.get('/', function (req, res) {
-  res.sendFile(__dirname + '/client/tictactoe.html');
-  //res.sendFile(__dirname + '/client/style.css');
+app.get('/', function(req, res) {
+    res.sendFile(__dirname + '/client/tictactoe.html');
+    //res.sendFile(__dirname + '/client/style.css');
 });
 app.use('/client', express.static(__dirname + '/client'));
 
@@ -27,153 +27,214 @@ let play_board = ["", "", "", "", "", "", "", "", ""];
 //Checks if the board is fully filled
 let board_full = false;
 //Runs when a new client connects
-io.sockets.on('connection', function (socket) {
-  console.log("connected");
-  //Give the client an id and potentially a player so they can tell us whether they are p1 p2 or spectator
-  let playerId = Math.random();
-  SOCKET_LIST[playerId] = socket;
-  players[playerId] = { id: playerId, symbol: null, move: null }
-  if (player1 == null) {
-    players[playerId].symbol = "X";
-    players[playerId].move = true;
-    player1 = players[playerId];
-    console.log(player1.id);
-  }
-  else if (player2 == null) {
-    players[playerId].symbol = "O";
-    players[playerId].move = false;
-    player2 = players[playerId];
-  }
-  else {
-    //potential spectator implimentation
-  }
-  //tell client their Id.
-  socket.emit('newPlayer', playerId);
-
-  socket.on('turnCheck', function (clickedBy) {
-    if(play_board[clickedBy.location] == "" && !board_full)
-    {
-      console.log("test");
-      console.log(player1.id == clickedBy.id);
-      console.log(player1.move);
-      console.log(player1.id == clickedBy.id && player1.move);
-      if (player1.id == clickedBy.id && player1.move == true) {
-        play_board[clickedBy.location] = player1.symbol;
-        console.log(play_board[clickedBy.location]);
-        update();
-        clickedBy.symbol = "X";
-        socket.emit('update', clickedBy);
-        SOCKET_LIST[player2.id].emit('update', clickedBy);
-      }
-      else if (player2.id == clickedBy.id && player2.move) {
-        play_board[clickedBy.location] = player2.symbol;
-        update();
-        clickedBy.symbol = "O";
-        socket.emit('update', clickedBy);
-        SOCKET_LIST[player1.id].emit('update', clickedBy);
-      }
+io.sockets.on('connection', function(socket) {
+    console.log("connected");
+    //Give the client an id and potentially a player so they can tell us whether they are p1 p2 or spectator
+    let playerId = Math.random();
+    SOCKET_LIST[playerId] = socket;
+    players[playerId] = { id: playerId, symbol: null, move: null }
+    if (player1 == null) {
+        players[playerId].symbol = "X";
+        players[playerId].move = true;
+        player1 = players[playerId];
+        console.log(player1.id);
+    } else if (player2 == null) {
+        players[playerId].symbol = "O";
+        players[playerId].move = false;
+        player2 = players[playerId];
+    } else {
+        //potential spectator implimentation
     }
-  })
+    //tell client their Id.
+    socket.emit('newPlayer', playerId);
 
-  function update() {
-    player1.move = !player1.move;
-    player2.move = !player2.move;
-    check_board_complete();
-    check_for_winner();
+    socket.on('turnCheck', function(clickedBy) {
+        if (play_board[clickedBy.location] == "" && !board_full) {
+            console.log("test");
+            console.log(player1.id == clickedBy.id);
+            console.log(player1.move);
+            console.log(player1.id == clickedBy.id && player1.move);
+            if (player1.id == clickedBy.id && player1.move == true) {
+                play_board[clickedBy.location] = player1.symbol;
+                console.log(play_board[clickedBy.location]);
+                update();
+                clickedBy.symbol = "X";
+                socket.emit('update', clickedBy);
+                SOCKET_LIST[player2.id].emit('update', clickedBy);
+            } else if (player2.id == clickedBy.id && player2.move) {
+                play_board[clickedBy.location] = player2.symbol;
+                update();
+                clickedBy.symbol = "O";
+                socket.emit('update', clickedBy);
+                SOCKET_LIST[player1.id].emit('update', clickedBy);
+            }
+        }
+    })
 
-  }
+    function update() {
+        player1.move = !player1.move;
+        player2.move = !player2.move;
+        check_board_complete();
+        check_for_winner();
 
-  const check_line = (a, b, c) => {
-    return (
-      play_board[a] == play_board[b] &&
-      play_board[b] == play_board[c] &&
-      (play_board[a] == player1.symbol || play_board[a] == player2.symbol)
-    );
-  };
-
-  //css
-  const check_match = () => {
-    for (i = 0; i < 9; i += 3) {
-      if (check_line(i, i + 1, i + 2)) {
-        /*
-          document.querySelector(`#block_${i}`).classList.add("win");
-          document.querySelector(`#block_${i + 1}`).classList.add("win");
-          document.querySelector(`#block_${i + 2}`).classList.add("win");
-          */
-        return play_board[i];
-      }
     }
-    for (i = 0; i < 3; i++) {
-      if (check_line(i, i + 3, i + 6)) {
-        /*
-          document.querySelector(`#block_${i}`).classList.add("win");
-          document.querySelector(`#block_${i + 3}`).classList.add("win");
-          document.querySelector(`#block_${i + 6}`).classList.add("win");
-          */
-        return play_board[i];
-      }
-    }
-    if (check_line(0, 4, 8)) {
-      /*
-        document.querySelector("#block_0").classList.add("win");
-        document.querySelector("#block_4").classList.add("win");
-        document.querySelector("#block_8").classList.add("win");
-        */
-      return play_board[0];
-    }
-    if (check_line(2, 4, 6)) {
-      /*
-        document.querySelector("#block_2").classList.add("win");
-        document.querySelector("#block_4").classList.add("win");
-        document.querySelector("#block_6").classList.add("win");
-        */
-      return play_board[2];
-    }
-    return "";
-  };
 
-  const check_for_winner = () => {
-    let res = check_match()
-    if (res == player1.symbol) {
-      socket.emit('gameEnd', 1);
-      SOCKET_LIST[player2.id].emit('gameEnd', 1);
-      board_full = true
-    } else if (res == player2.symbol) {
-      socket.emit('gameEnd', 2);
-      SOCKET6_LIST[player1.id].emit('gameEnd', 2);
-      board_full = true
-    } else if (board_full) {
-      socket.emit('gameEnd', 0);
-      SOCKET_LIST[player2.id].emit('gameEnd', 0);
-    }
-  };
+    const check_line = (a, b, c) => {
+        return (
+            play_board[a] == play_board[b] &&
+            play_board[b] == play_board[c] &&
+            (play_board[a] == player1.symbol || play_board[a] == player2.symbol)
+        );
+    };
 
-  check_board_complete = () => {
-    let flag = true;
-    play_board.forEach(element => {
-      if (element != player1.symbol && element != player2.symbol) {
-        flag = false;
-      }
+    //css
+    const check_match = () => {
+        for (i = 0; i < 9; i += 3) {
+            if (check_line(i, i + 1, i + 2)) {
+                /*
+                  document.querySelector(`#block_${i}`).classList.add("win");
+                  document.querySelector(`#block_${i + 1}`).classList.add("win");
+                  document.querySelector(`#block_${i + 2}`).classList.add("win");
+                  */
+                return play_board[i];
+            }
+        }
+        for (i = 0; i < 3; i++) {
+            if (check_line(i, i + 3, i + 6)) {
+                /*
+                  document.querySelector(`#block_${i}`).classList.add("win");
+                  document.querySelector(`#block_${i + 3}`).classList.add("win");
+                  document.querySelector(`#block_${i + 6}`).classList.add("win");
+                  */
+                return play_board[i];
+            }
+        }
+        if (check_line(0, 4, 8)) {
+            /*
+              document.querySelector("#block_0").classList.add("win");
+              document.querySelector("#block_4").classList.add("win");
+              document.querySelector("#block_8").classList.add("win");
+              */
+            return play_board[0];
+        }
+        if (check_line(2, 4, 6)) {
+            /*
+              document.querySelector("#block_2").classList.add("win");
+              document.querySelector("#block_4").classList.add("win");
+              document.querySelector("#block_6").classList.add("win");
+              */
+            return play_board[2];
+        }
+        return "";
+    };
+
+    const check_for_winner = () => {
+        let res = check_match()
+        if (res == player1.symbol) {
+            startSQL.query('SELECT wins FROM leaderboard AS data WHERE username = \'' + USERNAME_LIST[game.player1.id] + '\'', function(error, results, fields) {
+                if (error) {
+                    throw error;
+                } else {
+                    startSQL.query('UPDATE leaderboard SET wins = ' + results[0].wins + 1 + ' WHERE username = \'' + USERNAME_LIST[game.player1.id] + '\'', function(error, results, fields) {
+                        if (error) {
+                            throw error;
+                        }
+                    })
+                }
+            })
+            startSQL.query('SELECT losses FROM leaderboard AS data WHERE username = \'' + USERNAME_LIST[game.player2.id] + '\'', function(error, results, fields) {
+                if (error) {
+                    throw error;
+                } else {
+                    startSQL.query('UPDATE leaderboard SET losses = ' + results[0].losses + 1 + ' WHERE username = \'' + USERNAME_LIST[game.player2.id] + '\'', function(error, results, fields) {
+                        if (error) {
+                            throw error;
+                        }
+                    })
+                }
+            })
+            socket.emit('gameEnd', 1);
+            SOCKET_LIST[player2.id].emit('gameEnd', 1);
+            board_full = true
+        } else if (res == player2.symbol) {
+            startSQL.query('SELECT wins FROM leaderboard AS data WHERE username = \'' + USERNAME_LIST[game.player2.id] + '\'', function(error, results, fields) {
+                if (error) {
+                    throw error;
+                } else {
+                    startSQL.query('UPDATE leaderboard SET wins = ' + results[0].wins + 1 + ' WHERE username = \'' + USERNAME_LIST[game.player2.id] + '\'', function(error, results, fields) {
+                        if (error) {
+                            throw error;
+                        }
+                    })
+                }
+            })
+            startSQL.query('SELECT losses FROM leaderboard AS data WHERE username = \'' + USERNAME_LIST[game.player1.id] + '\'', function(error, results, fields) {
+                if (error) {
+                    throw error;
+                } else {
+                    startSQL.query('UPDATE leaderboard SET losses = ' + results[0].losses + 1 + ' WHERE username = \'' + USERNAME_LIST[game.player1.id] + '\'', function(error, results, fields) {
+                        if (error) {
+                            throw error;
+                        }
+                    })
+                }
+            })
+            socket.emit('gameEnd', 2);
+            SOCKET6_LIST[player1.id].emit('gameEnd', 2);
+            board_full = true
+        } else if (board_full) {
+            startSQL.query('SELECT ties FROM leaderboard AS data WHERE username = \'' + USERNAME_LIST[game.player2.id] + '\'', function(error, results, fields) {
+                if (error) {
+                    throw error;
+                } else {
+                    startSQL.query('UPDATE leaderboard SET ties = ' + results[0].ties + 1 + ' WHERE username = \'' + USERNAME_LIST[game.player2.id] + '\'', function(error, results, fields) {
+                        if (error) {
+                            throw error;
+                        }
+                    })
+                }
+            })
+            startSQL.query('SELECT ties FROM leaderboard AS data WHERE username = \'' + USERNAME_LIST[game.player1.id] + '\'', function(error, results, fields) {
+                if (error) {
+                    throw error;
+                } else {
+                    startSQL.query('UPDATE leaderboard SET ties = ' + results[0].ties + 1 + ' WHERE username = \'' + USERNAME_LIST[game.player1.id] + '\'', function(error, results, fields) {
+                        if (error) {
+                            throw error;
+                        }
+                    })
+                }
+            })
+            socket.emit('gameEnd', 0);
+            SOCKET_LIST[player2.id].emit('gameEnd', 0);
+        }
+    };
+
+    check_board_complete = () => {
+        let flag = true;
+        play_board.forEach(element => {
+            if (element != player1.symbol && element != player2.symbol) {
+                flag = false;
+            }
+        });
+        board_full = flag;
+    };
+
+    socket.on('reset', function() {
+        play_board = ["", "", "", "", "", "", "", "", ""];
+        board_full = false;
+        player1.move = true;
+        player2.move = false;
+        socket.emit('reset');
+    })
+
+    socket.on('disconnect', function() {
+        if (socket.id == player1) {
+            player1 = null;
+        } else if (socket.id == player2) {
+            player2 = null;
+        }
+        delete SOCKET_LIST[socket.id];
     });
-    board_full = flag;
-  };
-
-  socket.on('reset', function () {
-    play_board = ["", "", "", "", "", "", "", "", ""];
-    board_full = false;
-    player1.move = true;
-    player2.move = false;
-    socket.emit('reset');
-  })
-
-  socket.on('disconnect', function () {
-    if (socket.id == player1) {
-      player1 = null;
-    }
-    else if (socket.id == player2) {
-      player2 = null;
-    }
-    delete SOCKET_LIST[socket.id];
-  });
 });
 server.listen(4141);
