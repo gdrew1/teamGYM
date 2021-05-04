@@ -137,7 +137,7 @@ io.sockets.on('connection', function(socket) {
                 SOCKET_LIST[playerId] = socket;
                 SOCKETID_LIST[socket.id] = playerId;
                 USERNAME_LIST[playerId] = username;
-                socket.emit("newPlayer", playerId);
+                socket.emit("redirect", '/client/login.html');
             } else {
                 socket.emit('bad_register');
             }
