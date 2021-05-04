@@ -9,7 +9,10 @@ chrome.setDefaultService(new chrome.ServiceBuilder(chromedriver.path).build());
   let driver = await new Builder().forBrowser('chrome').build();
   try {
     await driver.get('http://ec2-3-140-1-42.us-east-2.compute.amazonaws.com:4141');
-    await driver.findElement(By.name("login")).sendKeys('webdriver', Key.RETURN);
+    await driver.findElement(By.name("login")).click();
+    await driver.findElement(By.name("userName")).sendKeys('a');
+    await driver.findElement(By.name("password")).sendKeys('a');
+
     await driver.wait(until.titleIs('webdriver - Google Search'), 1000);
   } finally {
     //await driver.quit();
